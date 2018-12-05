@@ -2,9 +2,14 @@ package com.example.mteag.ui_finalproject;
 import java.util.ArrayList;
 
 public class Deck {
+    //all cards not drawn yet
     private ArrayList<Card> deck;
+    //all cards drawn
+    private ArrayList<Card> drawnCards;
+    //fills deck with default 52 cards
     protected Deck() {
         deck = new ArrayList<>();
+        drawnCards = new ArrayList<>();
         deck.add(new Card(R.drawable.ace_of_clubs, 1));
         deck.add(new Card(R.drawable.ace_of_diamonds, 1));
         deck.add(new Card(R.drawable.ace_of_hearts, 1));
@@ -58,10 +63,19 @@ public class Deck {
         deck.add(new Card(R.drawable.king_of_hearts2, 10));
         deck.add(new Card(R.drawable.king_of_spades2, 10));
     }
+    //picks random card, removes from deck list, adds to drawnCards arraylist, returns card.
     protected Card draw() {
         int index = (int) (Math.random() * deck.size());
         Card drawnCard = deck.get(index);
         deck.remove(index);
+        drawnCards.add(drawnCard);
         return drawnCard;
+    }
+    //resets deck to 52 cards, adding back cards that have been drawn.
+    protected void reset() {
+        while (drawnCards.size() != 0) {
+            deck.add(drawnCards.get(0));
+            drawnCards.remove(0);
+        }
     }
 }
