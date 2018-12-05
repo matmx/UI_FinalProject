@@ -4,27 +4,31 @@ public class Player {
     private int score;
     private int cardCount;
     Player(final Player other) {
-        score = other.score;
-        cardCount = other.cardCount;
+        this.score = other.score;
+        this.cardCount = other.cardCount;
     }
     Player() {
-        score = 0;
-        cardCount = 0;
+        this.score = 0;
+        this.cardCount = 0;
     }
-
+    //function to get score
     public int getScore() {
-        return score;
+        return this.score;
     }
+    //function to increase winner's score
     public void addScore() {
-        score++;
+        this.score++;
     }
+    //function to call when game is over so card count resets
     public void resetCardCount() {
-        cardCount = 0;
+        this.cardCount = 0;
     }
+    //function to add card value to card count
     public void addCardCount(final int setAdd) {
-        cardCount += setAdd;
+        this.cardCount += setAdd;
     }
+    //function to get card count
     public int getCardCount() {
-        return cardCount;
+        return this.cardCount;
     }
 }
