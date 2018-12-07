@@ -1,15 +1,16 @@
 package com.example.mteag.ui_finalproject;
+import java.util.ArrayList;
 
 public class Player {
     private int score;
-    private int cardCount;
+    private ArrayList<Card> hand;
     Player(final Player other) {
         this.score = other.score;
-        this.cardCount = other.cardCount;
+        this.hand = new ArrayList<>(other.hand);
     }
     Player() {
         this.score = 0;
-        this.cardCount = 0;
+        this.hand = new ArrayList<>();
     }
     //function to get score
     public int getScore() {
@@ -19,16 +20,26 @@ public class Player {
     public void addScore() {
         this.score++;
     }
-    //function to call when game is over so card count resets
-    public void resetCardCount() {
-        this.cardCount = 0;
-    }
     //function to add card value to card count
-    public void addCardCount(final int setAdd) {
-        this.cardCount += setAdd;
+    protected int getHandSize() {
+        return hand.size();
     }
-    //function to get card count
-    public int getCardCount() {
-        return this.cardCount;
+    protected void addCard(Card newCard) {
+        hand.add(newCard);
+    }
+    protected int getCardCount() {
+        int count = 0;
+        int aces = 0;
+        for (int i = 0; i < hand.size(); i++) {
+            count += hand.get(i).getValue();
+            if (hand.get(i).getValue() == 1) {
+                aces++;
+            }
+        }
+        //changes ace from 1 to 11 if it wont cause you to bust.
+        if (count <= 11 && aces > 0) {
+            count += 10;
+        }
+        return count;
     }
 }
