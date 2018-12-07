@@ -7,6 +7,7 @@ import java.util.ArrayList;
 import android.widget.Button;
 import android.widget.TextView;
 import android.view.*;
+import java.util.concurrent.TimeUnit;
 
 public class MainActivity extends AppCompatActivity {
 
@@ -24,52 +25,19 @@ public class MainActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
-        final TextView playerCount = findViewById(R.id.playerCount);
-        playerCount.setText("Count: 0");
-
-        final TextView cpuCount = findViewById(R.id.cpuCount);
-        cpuCount.setText("Count: 0");
-
-        ImageView Comp1 = findViewById(R.id.CPU1);
-        Comp1.setImageResource(R.drawable.cardback);
-
-        ImageView Comp2 = findViewById(R.id.CPU2);
-        Comp2.setImageResource(R.drawable.cardback);
-
-        ImageView Comp3 = findViewById(R.id.CPU3);
-        Comp3.setImageResource(R.drawable.cardback);
-
-        ImageView Comp4 = findViewById(R.id.CPU4);
-        Comp4.setImageResource(R.drawable.cardback);
-
-        ImageView Comp5 = findViewById(R.id.CPU5);
-        Comp5.setImageResource(R.drawable.cardback);
-
-        ImageView Me1 = findViewById(R.id.ME1);
-        Me1.setImageResource(R.drawable.cardback);
-
-        ImageView Me2 = findViewById(R.id.ME2);
-        Me2.setImageResource(R.drawable.cardback);
-
-        ImageView Me3 = findViewById(R.id.ME3);
-        Me3.setImageResource(R.drawable.cardback);
-
-        ImageView Me4 = findViewById(R.id.ME4);
-        Me4.setImageResource(R.drawable.cardback);
-
-        ImageView Me5 = findViewById(R.id.ME5);
-        Me5.setImageResource(R.drawable.cardback);
+        resetScreen();
 
         //DRAW BUTTON
         final Button draw = findViewById(R.id.button);
         draw.setOnClickListener(new View.OnClickListener() {
             public void onClick(View v) {
                 userDraw();
-                String countText = "Count: " + user.getCardCount();
+                updatePlayerScore();
                 if (user.getCardCount() > 21) {
-                    countText = "BUST";
+                    cpu.addScore();
+                    newGame();
+                    resetScreen();
                 }
-                playerCount.setText(countText);
             }
         });
 
@@ -77,20 +45,23 @@ public class MainActivity extends AppCompatActivity {
         final Button stand = findViewById(R.id.button2);
         stand.setOnClickListener(new View.OnClickListener() {
             public void onClick(View v) {
-                int countToBeat = user.getCardCount();
                 cpuDraw();
                 cpuDraw();
-                String countText = "Count: " + cpu.getCardCount();
-                cpuCount.setText(countText);
-                while (cpu.getCardCount() <= countToBeat) {
-                    cpuDraw();
-                    countText = "Count: " + cpu.getCardCount();
+                updateCpuScore();
+                while (true) {
                     if (cpu.getCardCount() > 21) {
-                        countText = "BUST";
-                        cpuCount.setText(countText);
+                        user.addScore();
+                        newGame();
+                        resetScreen();
+                        break;
+                    } else if (cpu.getCardCount() > user.getCardCount()) {
+                        cpu.addScore();
+                        newGame();
+                        resetScreen();
                         break;
                     }
-                    cpuCount.setText(countText);
+                    cpuDraw();
+                    updateCpuScore();
                 }
         }
         });
@@ -139,6 +110,77 @@ public class MainActivity extends AppCompatActivity {
         cpu.addCard(drawnCard);
         return drawnCard;
     }
+    //reset deck and Player hands after a game
+    public void newGame() {
+        deck.reset();
+        user.resetHand();
+        cpu.resetHand();
+    }
 
+    //resets visuals for new game (count text and card pictures)
+    public void resetScreen() {
+        TextView playerCount = findViewById(R.id.playerCount);
+        playerCount.setText("Count: 0");
 
+        TextView cpuCount = findViewById(R.id.cpuCount);
+        cpuCount.setText("Count: 0");
+
+        TextView playerScore = findViewById(R.id.playerScore);
+        String playerScoreText = "Your Score: " + user.getScore();
+        playerScore.setText(playerScoreText);
+
+        TextView cpuScore = findViewById(R.id.cpuScore);
+        String cpuScoreText = "CPU Score: " + cpu.getScore();
+        cpuScore.setText(cpuScoreText);
+
+        ImageView Comp1 = findViewById(R.id.CPU1);
+        Comp1.setImageResource(R.drawable.cardback);
+
+        ImageView Comp2 = findViewById(R.id.CPU2);
+        Comp2.setImageResource(R.drawable.cardback);
+
+        ImageView Comp3 = findViewById(R.id.CPU3);
+        Comp3.setImageResource(R.drawable.cardback);
+
+        ImageView Comp4 = findViewById(R.id.CPU4);
+        Comp4.setImageResource(R.drawable.cardback);
+
+        ImageView Comp5 = findViewById(R.id.CPU5);
+        Comp5.setImageResource(R.drawable.cardback);
+
+        ImageView Me1 = findViewById(R.id.ME1);
+        Me1.setImageResource(R.drawable.cardback);
+
+        ImageView Me2 = findViewById(R.id.ME2);
+        Me2.setImageResource(R.drawable.cardback);
+
+        ImageView Me3 = findViewById(R.id.ME3);
+        Me3.setImageResource(R.drawable.cardback);
+
+        ImageView Me4 = findViewById(R.id.ME4);
+        Me4.setImageResource(R.drawable.cardback);
+
+        ImageView Me5 = findViewById(R.id.ME5);
+        Me5.setImageResource(R.drawable.cardback);
+    }
+
+    public void updatePlayerScore() {
+        TextView playerCount = findViewById(R.id.playerCount);
+
+        String countText = "Count: " + user.getCardCount();
+        if (user.getCardCount() > 21) {
+            countText = "BUST";
+        }
+        playerCount.setText(countText);
+    }
+
+    public void updateCpuScore() {
+        TextView cpuCount = findViewById(R.id.cpuCount);
+
+        String countText = "Count: " + user.getCardCount();
+        if (cpu.getCardCount() > 21) {
+            countText = "BUST";
+        }
+        cpuCount.setText(countText);
+    }
 }

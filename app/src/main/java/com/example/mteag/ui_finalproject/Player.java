@@ -24,9 +24,11 @@ public class Player {
     protected int getHandSize() {
         return hand.size();
     }
+    //add card to hand
     protected void addCard(Card newCard) {
         hand.add(newCard);
     }
+    //get card count (card values added up)
     protected int getCardCount() {
         int count = 0;
         int aces = 0;
@@ -41,5 +43,11 @@ public class Player {
             count += 10;
         }
         return count;
+    }
+    //used to reset hand
+    protected void resetHand() {
+        while (hand.size() != 0) {
+            hand.remove(0);
+        }
     }
 }
