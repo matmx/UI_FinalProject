@@ -3,18 +3,14 @@ package com.example.mteag.ui_finalproject;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.widget.ImageView;
-import java.util.ArrayList;
 import android.widget.Button;
 import android.widget.TextView;
 import android.view.*;
-import java.util.concurrent.TimeUnit;
 
 public class MainActivity extends AppCompatActivity {
 
     //deck with all cards
     private Deck deck = new Deck();
-    //ArrayList containing cards the player has drawn
-    private ArrayList<Card> yourCards = new ArrayList<>();
 
     private Player user = new Player();
 
@@ -26,17 +22,20 @@ public class MainActivity extends AppCompatActivity {
         setContentView(R.layout.activity_main);
 
         resetScreen();
+        newGame();
 
         //DRAW BUTTON
         final Button draw = findViewById(R.id.button);
         draw.setOnClickListener(new View.OnClickListener() {
             public void onClick(View v) {
+                //draw new card and update count value
                 userDraw();
-                updatePlayerScore();
+                updatePlayerCount();
+                //if drew over 21, give CPU the win and start new game
                 if (user.getCardCount() > 21) {
                     cpu.addScore();
-                    newGame();
                     resetScreen();
+                    newGame();
                 }
             }
         });
@@ -45,28 +44,30 @@ public class MainActivity extends AppCompatActivity {
         final Button stand = findViewById(R.id.button2);
         stand.setOnClickListener(new View.OnClickListener() {
             public void onClick(View v) {
-                cpuDraw();
-                cpuDraw();
-                updateCpuScore();
+                //loop until someone wins
                 while (true) {
+                    //if CPU is over 21, user wins
                     if (cpu.getCardCount() > 21) {
                         user.addScore();
-                        newGame();
                         resetScreen();
+                        newGame();
                         break;
+                        //if cpu is over your count but not over 21, they win
                     } else if (cpu.getCardCount() > user.getCardCount()) {
                         cpu.addScore();
-                        newGame();
                         resetScreen();
+                        newGame();
                         break;
                     }
+                    //if neither, draw until one is true
                     cpuDraw();
-                    updateCpuScore();
+                    updateCpuCount();
                 }
         }
         });
     }
 
+    //draws card for user and updates visuals to show that card
     private Card userDraw() {
         Card drawnCard = deck.draw();
         if (user.getHandSize() == 0) {
@@ -89,6 +90,7 @@ public class MainActivity extends AppCompatActivity {
         return drawnCard;
     }
 
+    //draws card for CPU and updates visuals to show that card
     private Card cpuDraw() {
         Card drawnCard = deck.draw();
         if (cpu.getHandSize() == 0) {
@@ -110,11 +112,19 @@ public class MainActivity extends AppCompatActivity {
         cpu.addCard(drawnCard);
         return drawnCard;
     }
+
     //reset deck and Player hands after a game
     public void newGame() {
         deck.reset();
         user.resetHand();
         cpu.resetHand();
+        userDraw();
+        userDraw();
+        cpuDraw();
+        cpuDraw();
+        updateCpuCount();
+        updatePlayerCount();
+
     }
 
     //resets visuals for new game (count text and card pictures)
@@ -164,7 +174,8 @@ public class MainActivity extends AppCompatActivity {
         Me5.setImageResource(R.drawable.cardback);
     }
 
-    public void updatePlayerScore() {
+    //updates text to show current card count for CPU
+    public void updatePlayerCount() {
         TextView playerCount = findViewById(R.id.playerCount);
 
         String countText = "Count: " + user.getCardCount();
@@ -174,7 +185,8 @@ public class MainActivity extends AppCompatActivity {
         playerCount.setText(countText);
     }
 
-    public void updateCpuScore() {
+    //updates text to show current card count for CPU
+    public void updateCpuCount() {
         TextView cpuCount = findViewById(R.id.cpuCount);
 
         String countText = "Count: " + user.getCardCount();
