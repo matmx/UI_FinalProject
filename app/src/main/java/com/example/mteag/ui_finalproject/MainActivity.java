@@ -134,7 +134,6 @@ public class MainActivity extends AppCompatActivity {
         userDraw();
         userDraw();
         cpuDraw();
-        //cpuDraw();
         updateCpuCount();
         updatePlayerCount();
         gameOver = false;
