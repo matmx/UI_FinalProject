@@ -16,6 +16,8 @@ public class MainActivity extends AppCompatActivity {
 
     private Player cpu = new Player();
 
+    private boolean gameOver = false;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -28,14 +30,17 @@ public class MainActivity extends AppCompatActivity {
         final Button draw = findViewById(R.id.button);
         draw.setOnClickListener(new View.OnClickListener() {
             public void onClick(View v) {
-                //draw new card and update count value
-                userDraw();
-                updatePlayerCount();
-                //if drew over 21, give CPU the win and start new game
-                if (user.getCardCount() > 21) {
-                    cpu.addScore();
-                    resetScreen();
-                    newGame();
+                if (!gameOver) {
+                    //draw new card and update count value
+                    userDraw();
+                    updatePlayerCount();
+                    //if drew over 21, give CPU the win and start new game
+                    if (user.getCardCount() > 21) {
+                        cpu.addScore();
+                        cpuDraw();
+                        updateCpuCount();
+                        gameOver = true;
+                    }
                 }
             }
         });
@@ -45,28 +50,36 @@ public class MainActivity extends AppCompatActivity {
         stand.setOnClickListener(new View.OnClickListener() {
             public void onClick(View v) {
                 //loop until someone wins
-                while (true) {
-                    //if CPU is over 21, user wins
-                    if (cpu.getCardCount() > 21) {
-                        user.addScore();
-                        resetScreen();
-                        newGame();
-                        break;
-                        //if cpu is over your count but not over 21, they win
-                    } else if (cpu.getCardCount() > user.getCardCount()) {
-                        cpu.addScore();
-                        resetScreen();
-                        newGame();
-                        break;
+                if (!gameOver) {
+                    while (true) {
+                        //if CPU is over 21, user wins
+                        if (cpu.getCardCount() > 21) {
+                            user.addScore();
+                            gameOver = true;
+                            break;
+                            //if cpu is over your count but not over 21, they win
+                        } else if (cpu.getCardCount() > user.getCardCount()) {
+                            cpu.addScore();
+                            gameOver = true;
+                            break;
+                        }
+                        //if neither, draw until one is true
+                        cpuDraw();
+                        updateCpuCount();
                     }
-                    //if neither, draw until one is true
-                    cpuDraw();
-                    updateCpuCount();
                 }
         }
         });
-    }
 
+        final Button reset = findViewById(R.id.button3);
+        reset.setOnClickListener(new View.OnClickListener() {
+            public void onClick(View v) {
+                resetScreen();
+                newGame();
+
+            }
+        });
+    }
     //draws card for user and updates visuals to show that card
     private Card userDraw() {
         Card drawnCard = deck.draw();
@@ -74,16 +87,16 @@ public class MainActivity extends AppCompatActivity {
             ImageView Me1 = findViewById(R.id.ME1);
             Me1.setImageResource(drawnCard.getImage());
         } else if (user.getHandSize() == 1) {
-            ImageView Me2 = findViewById(R.id.ME2);
+            ImageView Me2 = findViewById(R.id.ME4);
             Me2.setImageResource(drawnCard.getImage());
         } else if (user.getHandSize() == 2) {
-            ImageView Me3 = findViewById(R.id.ME3);
+            ImageView Me3 = findViewById(R.id.ME5);
             Me3.setImageResource(drawnCard.getImage());
         } else if (user.getHandSize() == 3) {
-            ImageView Me4 = findViewById(R.id.ME4);
+            ImageView Me4 = findViewById(R.id.ME2);
             Me4.setImageResource(drawnCard.getImage());
         } else if (user.getHandSize() == 4) {
-            ImageView Me5 = findViewById(R.id.ME5);
+            ImageView Me5 = findViewById(R.id.ME3);
             Me5.setImageResource(drawnCard.getImage());
         }
         user.addCard(drawnCard);
@@ -121,9 +134,10 @@ public class MainActivity extends AppCompatActivity {
         userDraw();
         userDraw();
         cpuDraw();
-        cpuDraw();
+        //cpuDraw();
         updateCpuCount();
         updatePlayerCount();
+        gameOver = false;
 
     }
 
@@ -189,7 +203,7 @@ public class MainActivity extends AppCompatActivity {
     public void updateCpuCount() {
         TextView cpuCount = findViewById(R.id.cpuCount);
 
-        String countText = "Count: " + user.getCardCount();
+        String countText = "Count: " + cpu.getCardCount();
         if (cpu.getCardCount() > 21) {
             countText = "BUST";
         }
