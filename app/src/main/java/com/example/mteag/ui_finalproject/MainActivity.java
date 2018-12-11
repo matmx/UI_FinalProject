@@ -62,6 +62,12 @@ public class MainActivity extends AppCompatActivity {
                             cpu.addScore();
                             gameOver = true;
                             break;
+                        } else if (cpu.getCardCount() == user.getCardCount() &&
+                                cpu.getCardCount() > 17) {
+                            TextView cpuCount = findViewById(R.id.cpuCount);
+                            cpuCount.setText("DRAW");
+                            gameOver = true;
+                            break;
                         }
                         //if neither, draw until one is true
                         cpuDraw();
